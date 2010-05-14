@@ -1,0 +1,23 @@
+== Sweet: The SWT wrapper for JRuby
+
+Before you start, download an SWT jar for your platform and put it in the
+swt folder. Then change the first require in lib/sweet/base.rb.
+Yes, this is a crude hack, and yes, I will change this ASAP ;o)
+
+=== Example
+
+  $: << File.join(__FILE__, '../lib')
+  require 'sweet'
+
+  Sweet.app 'My first Application', :layout => :fill do
+    label 'Your name:'
+    @name = edit_line
+
+    button 'Push me' do
+      puts "Hello, #{@name.text}!"
+    end
+  end
+
+Take a look at the files in the example folders to get a head start.
+
+Have fun!
