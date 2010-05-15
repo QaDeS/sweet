@@ -25,18 +25,23 @@ class Java::OrgEclipseSwtWidgets::Widget
       end
     end
 
-    #puts "Created #{self.class}(#{style}) with parent #{parent.class}"
     puts "Unknown properties for class #{self.class}: #{opts.keys.inspect}" unless opts.empty?
   end
 
+  def app(&block)
+    block ? @app.instance_eval(&block) : @app
+  end
+
+  def append(&block)
+    raise "Append called without block" unless block
+    handle_container &block
+  end
+
   def meta(&block)
-    if block
-      meta.class_eval &block
-    else
-      class << self
-        self
-      end
+    @meta ||= class << self
+      self
     end
+    block ? @meta.class_eval(&block) : @meta
   end
 
   def self.alias_property(aliases = {})
@@ -55,7 +60,10 @@ class Java::OrgEclipseSwtWidgets::Widget
       else
         name = k.to_s + "="
         if respond_to?(name)
-          send name, *v if v
+          if v
+            puts "#{self.java_class.simple_name}.#{k} = #{v.inspect}"
+            send name, *v
+          end
           opts.delete(k)
         end
       end
@@ -66,17 +74,15 @@ class Java::OrgEclipseSwtWidgets::Widget
   # TODO unify this layout mess somehow
   # TODO hierarchical hash for nicer client code
   def grid_data=(*opts)
-    l = layout_data
-    unless l && l.is_a?(layouts::GridData)
-      l = layouts::GridData.new
-    end
-
-    opts.each do |(k,v)|
-      value = v.is_a?(Symbol) ? v.swt_const : v
-      #puts "grid.#{k} = #{value}"
-      l.send("#{k.to_s}=", value)
-    end
-
+    opts = Hash[opts]
+    ax, ay = opts[:align]
+    gx, gy = opts[:grab]
+    sx, sy = opts[:span]
+    args = [ax || swt::BEGINNING, ay || swt::CENTER,
+      gx || false, gy || false, sx || 1, sy || 1]
+    args.map!{|v| v.is_a?(Symbol) ? v.swt_const : v}
+    puts args.inspect
+    l = layouts::GridData.new(*args)
     self.layout_data = l
   end
   def row_data=(x, y = nil)
@@ -129,10 +135,15 @@ class Java::OrgEclipseSwtWidgets::Widget
     org.eclipse.swt.custom
   end
 
+  def method_missing(name, *args, &block)
+    handle_container(&block) rescue super
+  end
+
   private
   def handle_container(&block)
     app.sweet_containers.push self
-    app.instance_eval &block
+    app &block
+  ensure
     app.sweet_containers.pop
   end
 

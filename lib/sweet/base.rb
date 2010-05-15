@@ -1,13 +1,10 @@
 require 'swt/swt-debug.jar'
 require 'java'
-require 'sweet/hacks'
-require 'sweet/widget'
-require 'sweet/composite'
-require 'sweet/shell'
+%w{hacks widget composite shell dialog}.each{|file| require "sweet/#{file}"}
 
 # TODO create gemspec
-# TODO github repos
 # TODO evaluate integration of jface
+# TODO enable additive and replacing :style on widget creation
 module Sweet
 
   import 'org.eclipse.swt'
@@ -36,18 +33,21 @@ module Sweet
     CTabFolder => {:default_listener => 'CTabFolder2'}
   }
 
+  DEFAULT = {:init_args => :text, :block_handler => SWT::Selection}
   WIDGET_OPTIONS = {
+    # Text components
     :label => {:style => SWT::WRAP, :init_args => :text},
-    # a lot of containers, if not all, have a 'text' property, which would
-    # shadow this awesome control. So we call it edit_line like in Shoes.
-    # TODO :init_opts should create getters. Might be unified with :custom_code.
     :edit_line => {:class => Text, :style => SWT::SINGLE | SWT::BORDER, :init_args => :text, :block_handler => :on_widget_default_selected},
     :edit_area => {:class => Text, :style => SWT::MULTI | SWT::BORDER, :init_args => :text, :block_handler => :on_widget_default_selected},
-    :button => {:style => SWT::PUSH, :init_args => :text, :block_handler => SWT::Selection},
-    :tool_item => {:style => SWT::PUSH, :init_args => :text, :block_handler => SWT::Selection},
-    :tree => {:style => SWT::VIRTUAL, :block_handler => SWT::Selection},
-    :progress => {:class => ProgressBar, :style => SWT::SMOOTH},
-    # TODO fake Menu container behaviour
+
+    # Buttons
+    :button => DEFAULT.merge(:style => SWT::PUSH),
+    :toggle_button => DEFAULT.merge(:class => Button, :style => SWT::TOGGLE),
+    :radio_button => DEFAULT.merge(:class => Button, :style => SWT::RADIO),
+    :check_button => DEFAULT.merge(:class => Button, :style => SWT::CHECK),
+    :arrow_button => DEFAULT.merge(:class => Button, :style => SWT::CHECK),
+
+    # Menus
     :menubar => {:class => Menu, :style => SWT::BAR},
     :popup => {:class => Menu, :style => SWT::POP_UP},
     :item => {:class => MenuItem, :style => SWT::PUSH, :init_args => :text, :block_handler => :on_widget_selected},
@@ -58,8 +58,23 @@ module Sweet
         c.menu = sub
       }
     },
+    
+    # Toolbars
+    :tool_item => DEFAULT.merge(:style => SWT::PUSH),
+
+    # Tabs
     :tab_folder => {:class => CTabFolder, :style => SWT::BORDER},
-    :tab_item => {:class => CTabItem, :style => SWT::CLOSE, :init_args => :text}
+    :tab_item => {:class => CTabItem, :style => SWT::CLOSE, :init_args => [:text, :control], :block_handler => proc{|c, opts, proc|
+        c.control = proc.call
+      }},
+
+    # Other components
+    :tree => {:style => SWT::VIRTUAL, :block_handler => SWT::Selection},
+    :progress => {:class => ProgressBar, :style => SWT::SMOOTH},
+    :group => {:init_args => :text},
+
+    # Dialogs
+    :color_dialog => {:style => SWT::APPLICATION_MODAL, :init_args => :text}
   }.unify
 
   WIDGETS = {}
@@ -101,7 +116,7 @@ module Sweet
       #      end
     end
 
-    opts = args.last.is_a?(Hash) ? args.pop : {}
+    opts = args.last.is_a?(Hash) ? args.pop.dup : {}
 
     style = opts.delete(:style) || init[:style] || SWT::NONE
     style = Array(style).inject(0) do |result, value|
@@ -109,11 +124,14 @@ module Sweet
       result | value
     end
 
+    puts "Creating #{cls.java_class.simple_name}(#{parent}, #{style})"
     result = cls.new(parent, style)
     result.instance_variable_set(:@block_handler, init[:block_handler])
 
     if init_args = init[:init_args]
-      opts.merge! Hash[Array(init_args).zip(args)]
+      Hash[Array(init_args).zip(args)].each do |k, v|
+        opts.merge! k => v if v
+      end
     end
     result.sweeten(parent.app, opts, &block)
 

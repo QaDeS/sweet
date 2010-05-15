@@ -15,13 +15,8 @@ class Java::OrgEclipseSwtWidgets::Shell
     size = (w || width), (h || height)
   end
 
-  # TODO enable child shells
-  def app
-    self
-  end
-
   def sweet_containers
-    @sweet_containers ||= []
+    @sweet_containers ||= [self]
   end
   
   def perform(&block)

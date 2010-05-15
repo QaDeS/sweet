@@ -24,14 +24,16 @@ Sweet.app :layout => :fill do
     #	Text text = new Text(folder, SWT.MULTI);
     #	text.setText("This tab can never be closed");
     #	specialItem.setControl(text);
-    @special_item = tab_item("Don't Close Me", :control => edit_area("This tab can never be closed"))
+    @special_item = tab_item("Don't Close Me") do
+      edit_area("This tab can never be closed")
+    end
     
     #	final CTabItem noCloseItem = new CTabItem(folder, SWT.NONE);
     #	noCloseItem.setText("No Close Button");
     #	Text text2 = new Text(folder, SWT.MULTI);
     #	text2.setText("This tab does not have a close button");
     #	noCloseItem.setControl(text2);
-    tab_item "No Close Button", :style => :none, :control => edit_area("This tab does not have a close button")
+    tab_item "No Close Button", edit_area("This tab does not have a close button"), :style => :none
   end
   
   #	folder.addCTabFolder2Listener(new CTabFolder2Adapter() {

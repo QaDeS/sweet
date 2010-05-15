@@ -12,7 +12,7 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
   #		GridData data = new GridData();
   #		data.horizontalSpan = 3;
   #		toolbar.setLayoutData(data);
-  tool_bar :grid_data => {:horizontalSpan => 3} do
+  tool_bar :grid_data => {:span => 3} do
 
     #		ToolItem itemBack = new ToolItem(toolbar, SWT.PUSH);
     #		itemBack.setText("Back");
@@ -37,13 +37,9 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
     #		   }
     #		};
     %w{Back Forward Stop Refresh}.each do |caption|
-      tool_item caption do
-        @browser.send(caption.downcase)
-      end
+      tool_item(caption) { @browser.send(caption.downcase) }
     end
-    tool_item 'Go' do
-      @browser.setUrl @location.text
-    end
+    tool_item('Go') { @browser.setUrl @location.text }
   end
 
   #		Label labelAddress = new Label(shell, SWT.NONE);
@@ -61,7 +57,7 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
   #				browser.setUrl(location.getText());
   #			}
   #		});
-  @location = edit_line :grid_data => {:horizontalAlignment => :fill, :horizontalSpan => 2, :grabExcessHorizontalSpace => true} do
+  @location = edit_line :grid_data => {:align => :fill, :span => 2, :grab => true} do
     @browser.setUrl @location.text
   end
 
@@ -83,14 +79,9 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
     #		data.grabExcessVerticalSpace = true;
     #		browser.setLayoutData(data);
     @browser = browser :grid_data => {
-      # This is how it might look like some day
-      # :x => [3, :fill, true],
-      # :y => [:fill, true]
-      :horizontalAlignment => :fill,
-      :verticalAlignment => :fill,
-      :horizontalSpan => 3,
-      :grabExcessHorizontalSpace => true,
-      :grabExcessVerticalSpace => true
+      :align => [:fill, :fill],
+      :span => 3,
+      :grab => [true, true]
     }
   rescue org.eclipse.swt.SWTError => e
     SYSERR.puts "Could not instantiate Browser: #{e.message}"
@@ -101,13 +92,13 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
   #		data = new GridData(GridData.FILL_HORIZONTAL);
   #		data.horizontalSpan = 2;
   #		status.setLayoutData(data);
-  @status = label :grid_data => {:horizontalSpan => 2, :horizontalAlignment => :fill}
+  @status = label :grid_data => {:span => 2, :align => :fill}
 
   #		final ProgressBar progressBar = new ProgressBar(shell, SWT.NONE);
   #		data = new GridData();
   #		data.horizontalAlignment = GridData.END;
   #		progressBar.setLayoutData(data);
-  @progress_bar = progress :grid_data => {:horizontalAlignment => :end}
+  @progress_bar = progress :grid_data => {:align => :end}
 
   #
   #		browser.addProgressListener(new ProgressListener() {

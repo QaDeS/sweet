@@ -6,7 +6,6 @@ Yes, this is a crude hack, and yes, I will change this ASAP ;o)
 
 === Example
 
-  $: << File.join(__FILE__, '../lib')
   require 'sweet'
 
   Sweet.app 'My first Application', :layout => :fill do
