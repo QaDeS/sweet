@@ -1,8 +1,10 @@
 == Sweet: The SWT wrapper for JRuby
 
-Before you start, download an SWT jar for your platform and put it in the
-swt folder. Then change the first require in lib/sweet/base.rb.
-Yes, this is a crude hack, and yes, I will change this ASAP ;o)
+Sweet is designed to provide the most readable and straight-forward DSL for the
+SWT toolkit while maintaining all of its flexibility. If you find any limits to
+this claim, please open a bug report or fix it on a fork if you feel
+adventurous.
+
 
 === Example
 
@@ -17,6 +19,6 @@ Yes, this is a crude hack, and yes, I will change this ASAP ;o)
     end
   end
 
-Take a look at the files in the example folders to get a head start.
+Also, take a look at the files in the example folders to get a head start.
 
 Have fun!

@@ -1,4 +1,16 @@
-require 'swt/swt-debug.jar'
+SWT_JAR = File.join(File.dirname(__FILE__), '../../swt/swt.jar')
+unless File.exists?(SWT_JAR)
+  require 'sweet/downloader'
+  Downloader.new.download_swt
+end
+
+begin
+  load SWT_JAR
+rescue
+  STDERR.puts "No swt.jar found. Download it an put the swt.jar into #{File.dirname(SWT_JAR)}"
+  # TODO implement something like "sweet install [toolkit]"
+end
+
 require 'java'
 %w{hacks widget composite shell dialog}.each{|file| require "sweet/#{file}"}
 
