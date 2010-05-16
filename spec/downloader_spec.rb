@@ -1,8 +1,8 @@
 require 'sweet/downloader'
 
-describe Downloader, '#system_qualifier' do
+describe Sweet::Downloader, '#system_qualifier' do
   before :each do
-    @d = Downloader.new
+    @d = Sweet::Downloader
   end
 
   it 'returns gtk-linux-x86 for Linux i686' do

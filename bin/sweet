@@ -1,0 +1,16 @@
+#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'sweet/downloader'
+
+cmd = ARGV[0]
+
+if cmd == 'install'
+  tk = ARGV[1]
+  opts = tk ? {:tk => tk} : {}
+  Sweet::Downloader.download_swt opts
+else
+  require 'sweet'
+  load cmd
+end
+

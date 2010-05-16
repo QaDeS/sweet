@@ -1,14 +1,11 @@
-SWT_JAR = File.join(File.dirname(__FILE__), '../../swt/swt.jar')
-unless File.exists?(SWT_JAR)
-  require 'sweet/downloader'
-  Downloader.new.download_swt
-end
+require 'sweet/downloader'
 
 begin
-  load SWT_JAR
-rescue
-  STDERR.puts "No swt.jar found. Download it an put the swt.jar into #{File.dirname(SWT_JAR)}"
-  # TODO implement something like "sweet install [toolkit]"
+  load Sweet::SWT_JAR
+rescue LoadError => e
+  STDERR.puts "No swt.jar found. Run:"
+  STDERR.puts "  sweet install [toolkit]"
+  exit
 end
 
 require 'java'
@@ -57,7 +54,7 @@ module Sweet
     :toggle_button => DEFAULT.merge(:class => Button, :style => SWT::TOGGLE),
     :radio_button => DEFAULT.merge(:class => Button, :style => SWT::RADIO),
     :check_button => DEFAULT.merge(:class => Button, :style => SWT::CHECK),
-    :arrow_button => DEFAULT.merge(:class => Button, :style => SWT::CHECK),
+    :arrow_button => DEFAULT.merge(:class => Button, :style => SWT::ARROW),
 
     # Menus
     :menubar => {:class => Menu, :style => SWT::BAR},
@@ -73,6 +70,10 @@ module Sweet
     
     # Toolbars
     :tool_item => DEFAULT.merge(:style => SWT::PUSH),
+    # TODO make CoolBar work
+#    :cool_item => {:init_args => :control, :block_handler => proc{ |c, opts, proc|
+#        c.control = proc.call
+#      }},
 
     # Tabs
     :tab_folder => {:class => CTabFolder, :style => SWT::BORDER},
@@ -136,7 +137,7 @@ module Sweet
       result | value
     end
 
-    puts "Creating #{cls.java_class.simple_name}(#{parent}, #{style})"
+    Sweet.debug "Creating #{cls.java_class.simple_name}(#{parent}, #{style})"
     result = cls.new(parent, style)
     result.instance_variable_set(:@block_handler, init[:block_handler])
 
@@ -160,7 +161,6 @@ module Sweet
       delegate_events(cls)
       if hacks = WIDGET_HACKS[cls]
         if custom_code = hacks[:custom_code]
-          #puts "Putting custom code into #{cls}"
           cls.class_eval &custom_code
         end
       end
@@ -183,7 +183,6 @@ module Sweet
 
       if evts.size == 1
         s = "on_#{n}"
-        #puts s
         cls.send(:alias_method, s, j) unless cls.respond_to?(s)
       else
         evts.each do |evt|
@@ -191,7 +190,6 @@ module Sweet
           if s.split(/_/).size == 1 && n != default_listener
             s = n + "_" + s
           end
-          #puts "#{cls.java_class.simple_name}.on_#{s} -> #{j}( #{p}.#{evt.name} )"
           # TODO provide addListener SWT::Xxx option
           unused_events = evts.select{ |e| e.name != evt.name }.map{ |e| "def #{e.name.underscore}(e)\nend" }.join("\n")
           cls.class_eval <<-EOF
@@ -214,5 +212,12 @@ module Sweet
     end
   end
 
+  def self.set_debug
+    @debug = true
+  end
+  def self.debug(text)
+    # TODO add a decent logging mechanism
+    puts text if @debug
+  end
 end
 

@@ -61,7 +61,7 @@ class Java::OrgEclipseSwtWidgets::Widget
         name = k.to_s + "="
         if respond_to?(name)
           if v
-            puts "#{self.java_class.simple_name}.#{k} = #{v.inspect}"
+            Sweet.debug "#{self.java_class.simple_name}.#{k} = #{v.inspect}"
             send name, *v
           end
           opts.delete(k)
@@ -81,7 +81,7 @@ class Java::OrgEclipseSwtWidgets::Widget
     args = [ax || swt::BEGINNING, ay || swt::CENTER,
       gx || false, gy || false, sx || 1, sy || 1]
     args.map!{|v| v.is_a?(Symbol) ? v.swt_const : v}
-    puts args.inspect
+    Sweet.debug args.inspect
     l = layouts::GridData.new(*args)
     self.layout_data = l
   end
