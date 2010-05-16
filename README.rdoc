@@ -5,10 +5,18 @@ SWT toolkit while maintaining all of its flexibility. If you find any limits to
 this claim, please open a bug report or fix it on a fork if you feel
 adventurous.
 
+=== Install
+
+Sweet is available as a gem:
+
+  sudo gem install sweet
+
+To install the necessary SWT for your platform libraries, run:
+
+  sudo sweet install
+
 
 === Example
-
-  require 'sweet'
 
   Sweet.app 'My first Application', :layout => :fill do
     label 'Your name:'
@@ -19,6 +27,15 @@ adventurous.
     end
   end
 
-Also, take a look at the files in the example folders to get a head start.
+You can then start your application via:
+
+  sweet my_app.rb
+
+Or put the following lines into the head of your file:
+
+  require 'rubygems'
+  require 'sweet'
+
+Also, take a look at the files in the example folder to get a head start.
 
 Have fun!
