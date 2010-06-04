@@ -36,6 +36,11 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
     #				else if (string.equals("Go")) browser.setUrl(location.getText());
     #		   }
     #		};
+    #		itemBack.addListener(SWT.Selection, listener);
+    #		itemForward.addListener(SWT.Selection, listener);
+    #		itemStop.addListener(SWT.Selection, listener);
+    #		itemRefresh.addListener(SWT.Selection, listener);
+    #		itemGo.addListener(SWT.Selection, listener);
     %w{Back Forward Stop Refresh}.each do |caption|
       tool_item(caption) { @browser.send(caption.downcase) }
     end
@@ -140,12 +145,6 @@ Sweet.app :layout => :grid.conf(:numColumns => 3) do
     @location.text = event.location if event.top
   end
 
-  #		itemBack.addListener(SWT.Selection, listener);
-  #		itemForward.addListener(SWT.Selection, listener);
-  #		itemStop.addListener(SWT.Selection, listener);
-  #		itemRefresh.addListener(SWT.Selection, listener);
-  #		itemGo.addListener(SWT.Selection, listener);
-  #
   #		shell.open();
   #		browser.setUrl("http://eclipse.org");
   @browser.setUrl "http://eclipse.org"

@@ -1,3 +1,4 @@
+# TODO limit to JRuby if possible
 spec = Gem::Specification.new do |s|
   s.name = 'sweet'
   s.version = '0.0.2'

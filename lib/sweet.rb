@@ -1,1 +1,1 @@
-require 'sweet/base'
+require 'sweet/swt'

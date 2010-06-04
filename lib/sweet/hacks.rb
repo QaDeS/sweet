@@ -1,20 +1,3 @@
-class Hash
-  def unify
-    each_pair do |k, v|
-      if k.is_a? Array
-        k.each do |key|
-          self[key.to_sym] = v
-        end
-        self.delete k
-      elsif ! k.is_a?(Symbol)
-        self[k.to_sym] = v
-        self.delete k
-      end
-    end
-    self
-  end
-end
-
 class Symbol
   # For configuring layouts
   def conf(opts = {})

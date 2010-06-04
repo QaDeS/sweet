@@ -1,7 +1,9 @@
 #!/usr/bin/env jruby
 
+# TODO means to create distributables (jar / WebStart / InstallAnywhere / ...)
+
 require 'rubygems'
-require 'sweet/downloader'
+require 'sweet/swt/downloader'
 
 cmd = ARGV[0]
 

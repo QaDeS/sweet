@@ -1,5 +1,5 @@
 module Sweet
-  SWT_JAR = File.join(File.dirname(__FILE__), '../../swt/swt.jar')
+  SWT_JAR = File.join(File.dirname(__FILE__), 'swt.jar')
 
   module Downloader
     def self.download_swt(opts = {})

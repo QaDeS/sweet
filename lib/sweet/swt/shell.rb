@@ -18,6 +18,10 @@ class Java::OrgEclipseSwtWidgets::Shell
   def sweet_containers
     @sweet_containers ||= [self]
   end
+
+  def var_containers
+    @var_containers ||= [self]
+  end
   
   def perform(&block)
     display.syncExec block
