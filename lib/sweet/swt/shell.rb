@@ -41,17 +41,8 @@ class Java::OrgEclipseSwtWidgets::Shell
     self.menu_bar = make_menu(:menubar, &block)
   end
 
-  def popup(&block)
-    self.menu = make_menu(:popup, &block)
-  end
-
   def method_missing(name, *args, &block)
     Sweet.create_widget(sweet_containers.last, name, *args, &block) || super
-  end
-
-  private
-  def make_menu(type, &block)
-    Sweet.create_widget(sweet_containers.last, type, &block)
   end
 
 end

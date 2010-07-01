@@ -2,6 +2,7 @@ class Java::OrgEclipseSwtWidgets::Composite
 
   def layout=(name, opts = {})
     Sweet.debug "layout = #{name}(#{opts.inspect})"
+    # TODO allow instantiated layouts and layout classes
     class_name = "#{name.to_s.capitalize}Layout"
     l = instance_eval "org.eclipse.swt.layout.#{class_name}.new"
 

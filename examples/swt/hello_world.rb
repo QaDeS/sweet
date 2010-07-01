@@ -1,5 +1,5 @@
-$: << File.join(__FILE__, '../lib')
-require 'sweet'
+$: << File.join(File.dirname(__FILE__), '../../lib')
+require 'sweet/swt'
 
 Sweet.app 'My first Application', :layout => :fill do
   label 'Your name:'

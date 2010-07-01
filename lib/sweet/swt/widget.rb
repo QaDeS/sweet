@@ -1,9 +1,7 @@
-require 'forwardable'
+require 'forwardable' # TODO remove?
 
 class Java::OrgEclipseSwtWidgets::Widget
   include Sweet::Component
-
-  extend Forwardable
 
   def sweet_block_handler(handler, &block)
     return false unless handler.is_a? Numeric
@@ -44,7 +42,8 @@ class Java::OrgEclipseSwtWidgets::Widget
     size.x
   end
   def width=(value)
-    self.size = value, nil
+    Sweet.debug "width=(#{value.inspect})"
+    setSize(value, height)
   end
 
   def height
@@ -55,10 +54,21 @@ class Java::OrgEclipseSwtWidgets::Widget
   end
 
   def size=(*s)
+    Sweet.debug "size=(#{s.inspect})"
     nw, nh = s.flatten
     nw ||= width
     nh ||= height
+    Sweet.debug "setSize(#{nw.inspect}, #{nh.inspect})"
     setSize(nw, nh)
+  end
+
+  def popup(&block)
+    self.menu = make_menu(:popup, &block)
+  end
+
+  private
+  def make_menu(type, &block)
+    Sweet.create_widget(sweet_containers.last, type, &block)
   end
 
   # TODO replace via import?

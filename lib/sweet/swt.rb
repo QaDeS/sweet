@@ -13,8 +13,6 @@ require 'sweet/base'
 require 'java'
 %w{widget composite shell dialog}.each{|file| require "sweet/swt/#{file}"}
 
-# TODO evaluate integration of jface
-
 module Sweet
 
   import 'org.eclipse.swt'
@@ -79,8 +77,8 @@ module Sweet
 
     # Tabs
     :tab_folder => {:class => CTabFolder, :style => SWT::BORDER},
-    :tab_item => {:class => CTabItem, :style => SWT::CLOSE, :init_args => [:text, :control], :block_handler => proc{|c, opts, proc|
-        c.control = proc.call
+    :tab_item => {:class => CTabItem, :style => SWT::CLOSE, :init_args => [:text, :control], :block_handler => proc{|c, opts, block|
+        c.control = block.call
       }},
 
     # Other components
@@ -89,11 +87,26 @@ module Sweet
     :group => {:init_args => :text},
 
     # Dialogs
-    :color_dialog => {:style => SWT::APPLICATION_MODAL, :init_args => :text}
+    :color_dialog => {:style => SWT::APPLICATION_MODAL, :init_args => :text},
+    :modal_dialog => {:style => SWT::APPLICATION_MODAL, :init_args => :text, :block_handler => proc { |c, opts, block|
+        meta.class_eval do
+          def open
+            shell = widgets::Shell.new(app, swt::DIALOG_TRIM | style)
+            shell.text = text
+            shell.app &block
+            shell.open
+            while !shell.isDisposed
+              app.display.sleep unless display.readAndDispatch()
+              return result
+            end
+          end
+        end
+      }
+    }
   }
 
   def self.create_app(name, opts, &block)
-        # build the UI
+    # build the UI
     Display.setAppName(name)
     display = Display.new
 

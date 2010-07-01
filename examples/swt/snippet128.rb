@@ -1,5 +1,5 @@
-$: << File.join(__FILE__, '../lib')
-require 'sweet'
+$: << File.join(File.dirname(__FILE__), '../../lib')
+require 'sweet/swt'
 
 #   Display display = new Display();
 #		final Shell shell = new Shell(display);
