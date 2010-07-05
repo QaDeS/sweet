@@ -10,6 +10,9 @@ module Sweet
 
   # TODO integrate all standard widgets
 
+  WIDGET_HACKS = {
+  }
+
   default = {:init_args => :text}
   WIDGET_DEFAULTS = {
     :edit_line => default.merge(:class => JTextField),
@@ -18,11 +21,13 @@ module Sweet
     :menu_bar => {:appender => :setJMenuBar}
   }
 
-  WIDGET_HACKS = {
-  }
-
   def self.create_app(name, opts, &block)
     frame = JFrame.new(name)
+    # TODO factor this out
+    class << frame; self; end.class_eval do
+      include Application
+    end
+    frame.initialize_app frame
     frame.default_close_operation = JFrame::EXIT_ON_CLOSE
     frame.sweeten(opts, &block)
     frame.visible = true

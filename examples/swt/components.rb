@@ -1,16 +1,16 @@
 $: << File.join(File.dirname(__FILE__), '../../lib')
 require 'sweet/swt'
 
-class Tab < Java::OrgEclipseSwtCustom::CTabItem
+class Tab < Sweet::VarContainer
   def self.title(title = nil)
     title ? instances[@title = title] = self : @title
   end
+
   def self.instances
     @instances ||= {}
   end
 
   def create
-    var_container!
     @style = 0
     group :layout => :grid, :grid_data => {:align => [:fill, :fill], :grab => [true, true]} do
       create_example_group
@@ -22,11 +22,11 @@ class Tab < Java::OrgEclipseSwtCustom::CTabItem
 
   def create_example_group
     example_layout = 
-    @example_group = group('Examples', example_layout) do
+      @example_group = group('Examples', example_layout) do
       example_groups if respond_to? :example_group
     end
     @parameters_group =
-    create_example_widgets
+      create_example_widgets
   end
 
   def create_example_widgets
@@ -99,14 +99,13 @@ Dir.glob(File.join(File.dirname(__FILE__), 'components/*.rb')).each{|file| load 
 Sweet.app 'Component DEMO', :layout => :fill do
 
   tab_folder do
-    tab_item Buttons::title do
-      @parent_tab = composite(:layout => :grid.conf(:numColumns => 3))
-    end
-    buttons = Buttons.new(@parent_tab, swt::CLOSE)
+    tab_item do
+      buttons = Buttons.new(:layout => :grid.conf(:numColumns => 3), :style => swt::CLOSE)
 
-    buttons.create_alignment_group
-    buttons.create_example_group
-    buttons.create_style_group
+      buttons.create_alignment_group
+      buttons.create_example_group
+      buttons.create_style_group
+    end
   end
 
 end

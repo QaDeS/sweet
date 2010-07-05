@@ -40,15 +40,15 @@ module Sweet
     end
 
     opts = args.last.is_a?(Hash) ? args.pop.dup : {}
-
-    widget = initialize_widget(parent, cls, opts, init)
-    widget.instance_variable_set(:@block_handler, init[:block_handler])
-
     if init_args = init[:init_args]
       Array(init_args).zip(args).each do |(k, v)|
         opts.merge!(k => v) if v
       end
     end
+
+    widget = initialize_widget(parent, cls, opts, init)
+    widget.instance_variable_set(:@block_handler, init[:block_handler])
+
     widget.sweeten(parent.app, opts, &block)
 
     widget
@@ -81,7 +81,7 @@ module Sweet
         when nil
           handle_container &block
         when Symbol
-          send handler, &block
+          handle_event handler, &block
         when Proc
           instance_eval do
             handler.call self, opts, block
@@ -93,6 +93,7 @@ module Sweet
 
       puts "Unknown properties for class #{self.class}: #{opts.keys.inspect}" unless opts.empty?
     end
+    alias handle_event send
 
     def app(&block)
       return @app unless block
@@ -146,17 +147,51 @@ module Sweet
       app.sweet_containers.pop
     end
 
-
     module ClassMethods
       def alias_property(aliases = {})
         aliases.each do |from, to|
-          alias_method from, to unless "to"
-          alias_method "#{from}=", "#{to}=" unless "#{to}="
+          alias_method from, to unless respond_to? to
+          alias_method "#{from}=", "#{to}=" unless respond_to? "#{to}="
         end
       end
     end
 
   end
 
-end
+  module Application
+    def initialize_app(root)
+      sweet_containers << root
+      var_containers << root
+    end
+    def sweet_containers
+      @sweet_containers ||= []
+    end
+    def var_containers
+      @var_containers ||= []
+    end
+    # TODO find suitable exception
+    def perform(&block)
+      raise 'perform is not implemented'
+    end
 
+    def busy(&block)
+      raise 'busy is not implemented'
+    end
+    def method_missing(name, *args, &block)
+      Sweet.create_widget(sweet_containers.last, name, *args, &block) || super
+    end
+  end
+
+  class VarContainer
+    include Component
+
+    private
+    def handle_container(&block)
+      app.var_containers.push self
+      app &block
+    ensure
+      app.var_containers.pop
+    end
+  end
+
+end

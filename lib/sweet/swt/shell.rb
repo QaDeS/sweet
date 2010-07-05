@@ -15,34 +15,8 @@ class Java::OrgEclipseSwtWidgets::Shell
     size = (w || width), (h || height)
   end
 
-  def sweet_containers
-    @sweet_containers ||= [self]
-  end
-
-  def var_containers
-    @var_containers ||= [self]
-  end
-  
-  def perform(&block)
-    display.syncExec block
-  end
-
-  def busy(&block)
-    Thread.new do
-      perform do
-        custom::BusyIndicator.showWhile(display) do
-          block.call
-        end
-      end
-    end
-  end
-
   def menubar(&block)
     self.menu_bar = make_menu(:menubar, &block)
-  end
-
-  def method_missing(name, *args, &block)
-    Sweet.create_widget(sweet_containers.last, name, *args, &block) || super
   end
 
 end

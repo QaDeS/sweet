@@ -11,7 +11,7 @@ end
 require 'sweet/base'
 
 require 'java'
-%w{widget composite shell dialog}.each{|file| require "sweet/swt/#{file}"}
+%w{widget composite shell dialog application}.each{|file| require "sweet/swt/#{file}"}
 
 module Sweet
 
@@ -112,6 +112,10 @@ module Sweet
 
     # TODO allow multiple shells
     shell = Shell.new(display)
+    class << shell; self; end.class_eval do
+      include Application
+    end
+    shell.initialize_app shell
     shell.sweeten(display, name, opts, &block)
     shell.open
 
