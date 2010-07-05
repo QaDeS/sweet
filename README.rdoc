@@ -1,9 +1,13 @@
-== Sweet: The SWT wrapper for JRuby
+== Sweet: The GUI wrapper for Ruby/JRuby
 
 Sweet is designed to provide the most readable and straight-forward DSL for the
-SWT toolkit while maintaining all of its flexibility. If you find any limits to
-this claim, please open a bug report or fix it on a fork if you feel
-adventurous.
+most common GUI toolkits while maintaining all of their flexibility. If you find
+any limits to this claim, please open a bug report or fix it on a fork if you
+feel adventurous.
+
+The primary and most complete toolkit right now is SWT, which requires JRuby.
+Swing and wxRuby exist with rudimentary support so far. Gnome2 and Cocoa are in
+the making. Pull requests for new widgets and toolkits are always welcome.
 
 === Install
 
@@ -11,7 +15,7 @@ Sweet is available as a gem:
 
   sudo gem install sweet
 
-To install the necessary SWT for your platform libraries, run:
+To install the necessary SWT libraries for your platform, run:
 
   sudo sweet install
 
