@@ -6,7 +6,7 @@ any limits to this claim, please open a bug report or fix it on a fork if you
 feel adventurous.
 
 The primary and most complete toolkit right now is SWT, which requires JRuby.
-Swing and wxRuby exist with rudimentary support so far. Gnome2 and Cocoa are in
+Swing, wxRuby and Gnome2 exist with rudimentary support so far. Cocoa is in
 the making. Pull requests for new widgets and toolkits are always welcome.
 
 === Install
