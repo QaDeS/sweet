@@ -1,7 +1,7 @@
 require 'sweet/base'
 
 require 'java'
-%w{component frame}.each { |f| require "sweet/swing/#{f}" }
+%w{application component frame}.each { |f| require "sweet/swing/#{f}" }
 
 
 module Sweet
@@ -33,22 +33,8 @@ module Sweet
     frame.visible = true
   end
   
-  def self.create_widget_class(name, init)
-    # build widget with default accessors
-    class_name = init[:class] || name
-    class_name = class_name.to_s.camelize(:upper) if class_name.is_a?(Symbol)
-    cls = class_name.is_a?(Class) ? class_name : const_get('J' + class_name)
-
-    unless WIDGETS.values.member? cls
-      delegate_events(cls)
-      if hacks = WIDGET_HACKS[cls]
-        if custom_code = hacks[:custom_code]
-          cls.class_eval &custom_code
-        end
-      end
-    end
-
-    cls
+  def self.create_widget_class(class_name, init)
+    class_name.is_a?(Class) ? class_name : const_get('J' + class_name)
   end
 
   def self.initialize_widget(parent, cls, opts, init)

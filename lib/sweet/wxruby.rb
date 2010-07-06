@@ -40,7 +40,6 @@ module Sweet
   end
   
   def self.create_widget_class(cls, init)
-    # build widget with default accessors
     cls.is_a?(Class) ? cls : Wx.const_get(cls)
   end
 
